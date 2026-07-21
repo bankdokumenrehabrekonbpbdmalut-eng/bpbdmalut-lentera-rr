@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+<link rel="icon" type="image/png" sizes="32x32" href="assets/images\images/favicon.png">
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+Buku Inventaris Digital | LENTERA RR
+</title>
+
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+rel="stylesheet">
+
+<link
+rel="stylesheet"
+href="assets/css/style.css">
+
+<style>
+
+body{
+
+background:#f5f7fb;
+
+}
+
+.header-app{
+
+background:#0d6efd;
+
+color:#fff;
+
+padding:20px 0;
+
+box-shadow:0 2px 10px rgba(0,0,0,.15);
+
+}
+
+.header-app h2{
+
+font-weight:700;
+
+margin:0;
+
+}
+
+.header-app p{
+
+margin:0;
+
+opacity:.9;
+
+}
+
+.card-app{
+
+border:none;
+
+border-radius:15px;
+
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+}
+
+.toolbar{
+
+background:#fff;
+
+border-radius:12px;
+
+padding:20px;
+
+margin-bottom:20px;
+
+box-shadow:0 2px 8px rgba(0,0,0,.05);
+
+}
+
+.table thead{
+
+background:#0d6efd;
+
+color:#fff;
+
+}
+
+.table td{
+
+vertical-align:middle;
+
+}
+
+.stat-card{
+
+background:#fff;
+
+border-radius:12px;
+
+padding:18px;
+
+box-shadow:0 2px 8px rgba(0,0,0,.05);
+
+text-align:center;
+
+height:100%;
+
+}
+
+.stat-card h3{
+
+font-weight:700;
+
+margin-bottom:5px;
+
+color:#0d6efd;
+
+}
+
+.footer-app{
+
+padding:20px;
+
+text-align:center;
+
+color:#777;
+
+font-size:14px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<div class="header-app">
+
+<div class="container">
+
+<div class="d-flex
+justify-content-between
+align-items-center">
+
+<div>
+
+<h2>
+
+<i class="bi bi-journal-bookmark-fill me-2"></i>
+
+BUKU INVENTARIS DIGITAL
+
+</h2>
+
+<p>
+
+Portal LENTERA RR
+
+Bidang Rehabilitasi dan Rekonstruksi
+
+BPBD Provinsi Maluku Utara
+
+</p>
+
+</div>
+
+<a
+href="index.html"
+class="btn btn-light">
+
+<i class="bi bi-house-door-fill me-2"></i>
+
+Kembali ke Beranda
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- CONTENT -->
+
+<div class="container my-4">
+
+<!-- STATISTIK -->
+
+<div class="row g-3 mb-4">
+
+<div class="col-md-3">
+
+<div class="stat-card">
+
+<h3 id="totalDokumen">
+
+0
+
+</h3>
+
+<div>Total Dokumen</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="stat-card">
+
+<h3 id="totalKategori">
+
+0
+
+</h3>
+
+<div>Kategori</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="stat-card">
+
+<h3 id="totalSubkategori">
+
+0
+
+</h3>
+
+<div>Subkategori</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="stat-card">
+
+<h3 id="tahunTerbaru">
+
+-
+
+</h3>
+
+<div>Tahun Terbaru</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- FILTER -->
+
+<div class="toolbar">
+
+<div class="row g-3">
+
+<div class="col-md-4">
+
+<input
+
+type="text"
+
+id="searchDokumen"
+
+class="form-control"
+
+placeholder="Cari Judul Dokumen...">
+
+</div>
+
+<div class="col-md-3">
+
+<select
+
+id="filterKategori"
+
+class="form-select">
+
+<option value="">
+
+Semua Kategori
+
+</option>
+
+</select>
+
+</div>
+
+<div class="col-md-3">
+
+<select
+
+id="filterSubkategori"
+
+class="form-select">
+
+<option value="">
+
+Semua Subkategori
+
+</option>
+
+</select>
+
+</div>
+
+<div class="col-md-2">
+
+<button
+
+class="btn btn-outline-secondary w-100"
+
+id="btnReset">
+
+<i class="bi bi-arrow-clockwise me-2"></i>
+
+Reset
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- TABEL -->
+
+<div class="card card-app">
+
+<div class="card-body">
+
+<div class="table-responsive">
+
+<table class="table table-bordered table-hover">
+
+<thead>
+
+<tr>
+
+<th width="60">
+
+No
+
+</th>
+
+<th>
+
+Judul Dokumen
+
+</th>
+
+<th width="180">
+
+Kategori
+
+</th>
+
+<th width="200">
+
+Subkategori
+
+</th>
+
+<th width="90">
+
+Tahun
+
+</th>
+
+<th width="90">
+
+Aksi
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody id="inventarisTable">
+
+<tr>
+
+<td colspan="6"
+class="text-center">
+
+Memuat data...
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<div class="card-footer bg-white">
+
+<div class="d-flex justify-content-between align-items-center">
+
+<button
+class="btn btn-outline-primary"
+id="btnPrev">
+
+<i class="bi bi-chevron-left"></i>
+
+Sebelumnya
+
+</button>
+
+<span
+id="infoHalaman"
+class="fw-semibold">
+
+Halaman 1 dari 1
+
+</span>
+
+<button
+class="btn btn-outline-primary"
+id="btnNext">
+
+Berikutnya
+
+<i class="bi bi-chevron-right"></i>
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- MODAL PREVIEW -->
+
+<div
+class="modal fade"
+id="previewModal"
+tabindex="-1">
+
+<div
+class="modal-dialog modal-xl modal-dialog-centered">
+
+<div class="modal-content">
+
+<div class="modal-header">
+
+<h5 class="modal-title">
+
+Preview Dokumen
+
+</h5>
+
+<button
+class="btn-close"
+data-bs-dismiss="modal">
+
+</button>
+
+</div>
+
+<div
+class="modal-body p-0"
+style="height:80vh;">
+
+<iframe
+
+id="previewFrame"
+
+style="width:100%;
+height:100%;
+border:none;">
+
+</iframe>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- FOOTER -->
+
+<div class="footer-app">
+
+<hr>
+
+Portal LENTERA RR © 2026
+
+<br>
+
+Bidang Rehabilitasi dan Rekonstruksi
+
+<br>
+
+BPBD Provinsi Maluku Utara
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="assets/js/api.js"></script>
+
+<script src="assets/js/inventaris.js"></script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded",async()=>{
+
+await loadInventaris();
+
+/*==============================
+STATISTIK
+==============================*/
+
+if(typeof inventaris!=="undefined"){
+
+document.getElementById("totalDokumen").innerText=
+inventaris.length;
+
+/* Total Kategori */
+
+const kategori=[
+...new Set(
+inventaris.map(d=>d.jenis)
+)];
+
+document.getElementById("totalKategori").innerText=
+kategori.length;
+
+/* Total Subkategori */
+
+const subkategori=[
+...new Set(
+inventaris.map(d=>d.kategori)
+)];
+
+document.getElementById("totalSubkategori").innerText=
+subkategori.length;
+
+/* Tahun Terbaru */
+
+const tahun=
+inventaris
+.map(d=>parseInt(d.tahun))
+.filter(n=>!isNaN(n));
+
+document.getElementById("tahunTerbaru").innerText=
+
+tahun.length
+?
+Math.max(...tahun)
+:
+"-";
+
+}
+
+/*==============================
+FILTER SUBKATEGORI
+==============================*/
+
+const sub=document.getElementById("filterSubkategori");
+
+if(sub){
+
+const list=[
+...new Set(
+inventaris.map(
+d=>d.kategori
+)
+)
+].sort();
+
+list.forEach(item=>{
+
+sub.innerHTML+=
+`<option>${item}</option>`;
+
+});
+
+}
+
+/*==============================
+RESET
+==============================*/
+
+document
+.getElementById("btnReset")
+?.addEventListener("click",()=>{
+
+document
+.getElementById("searchDokumen")
+.value="";
+
+document
+.getElementById("filterKategori")
+.selectedIndex=0;
+
+document
+.getElementById("filterSubkategori")
+.selectedIndex=0;
+
+dataAktif=[...inventaris];
+
+currentPage=1;
+
+renderInventaris();
+
+});
+
+});
+
+</script>
+
+</body>
+
+</html>
+
