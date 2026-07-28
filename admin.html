@@ -451,6 +451,7 @@ Reset
 </div>
 
 <button
+id="btnTambahDokumen"
 class="btn btn-primary"
 data-bs-toggle="modal"
 data-bs-target="#modalDokumen">
@@ -732,6 +733,52 @@ required>
 
 <label class="form-label">
 
+Nomor Dokumen
+
+</label>
+
+<input
+type="text"
+id="nomor"
+class="form-control">
+
+</div>
+
+<div class="col-md-6">
+
+<label class="form-label">
+
+Tahun
+
+</label>
+
+<input
+type="number"
+id="tahun"
+class="form-control">
+
+</div>
+
+<div class="col-md-12">
+
+<label class="form-label">
+
+Tentang
+
+</label>
+
+<textarea
+id="tentang"
+class="form-control"
+rows="2">
+</textarea>
+
+</div>
+
+<div class="col-md-6">
+
+<label class="form-label">
+
 Kategori
 
 </label>
@@ -776,32 +823,72 @@ Pilih Subkategori
 
 </div>
 
-<div class="col-md-4">
+<div class="col-md-6">
 
 <label class="form-label">
 
-Tahun
+Jenis
+<small class="text-muted">
+(Folder Level 3 - opsional)
+</small>
 
 </label>
 
-<input
-type="number"
-id="tahun"
-class="form-control">
+<select
+id="jenis"
+class="form-select">
+
+<option value="">
+
+Tidak Ada
+
+</option>
+
+</select>
 
 </div>
 
-<div class="col-md-8">
+<div class="col-md-12">
 
 <label class="form-label">
-
-Link Google Drive
-
+Upload File PDF
 </label>
 
 <input
-type="url"
+type="file"
+id="fileDokumen"
+class="form-control"
+accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png">
+
+<div class="form-text">
+
+Upload file PDF langsung dari komputer
+(jika tidak menggunakan Link Google Drive).
+
+</div>
+
+</div>
+
+<div class="col-md-12">
+
+<div class="text-center fw-semibold text-secondary">
+
+──────── ATAU ────────
+
+</div>
+
+</div>
+
+<div class="col-md-12">
+
+<label class="form-label">
+Link Google Drive
+</label>
+
+<input
 id="link"
+name="link"
+type="text"
 class="form-control">
 
 </div>
@@ -815,19 +902,17 @@ class="form-control">
 <div class="modal-footer">
 
 <button
+type="button"
 class="btn btn-secondary"
 data-bs-dismiss="modal">
-
 Batal
-
 </button>
 
 <button
+type="button"
 class="btn btn-primary"
 id="btnSimpanDokumen">
-
 Simpan
-
 </button>
 
 </div>
@@ -884,25 +969,166 @@ const subkategoriData={
 
 };
 
+const jenisData={
+
+"Produk Hukum":{
+
+"Undang-Undang":[],
+
+"Peraturan Pemerintah":[],
+
+"Peraturan Presiden":[],
+
+"Permen":[],
+
+"Peraturan BNPB":[],
+
+"Perda":[],
+
+"Pergub":[],
+
+"SK Kepala BPBD":[]
+
+},
+
+"Pedoman":{
+
+"Pedoman":[]
+
+},
+
+"Perencanaan":{
+
+"JITUPASNA":[],
+
+"R3P":[]
+
+},
+
+"Administrasi":{
+
+"Surat":[],
+
+"Berita Acara":[],
+
+"Notulen":[],
+
+"Kontrak":[],
+
+"Laporan":[],
+
+"Administrasi Pendukung Lainnya":[]
+
+},
+
+"Template":{
+
+"Surat":[],
+
+"Berita Acara":[],
+
+"Notulen":[],
+
+"Kontrak":[],
+
+"Laporan":[],
+
+"Administrasi Pendukung Lainnya":[]
+
+}
+
+};
+
 document
 .getElementById("kategori")
 .addEventListener("change",function(){
 
-const select=document.getElementById("subkategori");
+const kategori=this.value;
 
-select.innerHTML="";
+const subkategori=
+document.getElementById("subkategori");
 
-subkategoriData[this.value].forEach(item=>{
+console.log("Kategori dipilih :", kategori);
 
-select.innerHTML+=`
+console.log(subkategoriData);
 
-<option value="${item}">
+subkategori.innerHTML="";
 
-${item}
+const daftarSubkategori =
+subkategoriData[kategori] || [];
 
-</option>
+daftarSubkategori.forEach(item=>{
 
-`;
+    subkategori.innerHTML += `
+        <option value="${item}">
+            ${item}
+        </option>
+    `;
+
+});
+
+if(daftarSubkategori.length>0){
+
+    subkategori.selectedIndex=0;
+
+}
+
+subkategori.dispatchEvent(
+new Event("change")
+);
+
+});
+
+document
+.getElementById("subkategori")
+.addEventListener("change",function(){
+
+const kategori=
+
+document.getElementById("kategori").value;
+
+const sub=this.value;
+
+const jenis=
+
+document.getElementById("jenis");
+
+jenis.innerHTML="";
+
+const jenisContainer =
+document.getElementById("jenisContainer");
+
+const list =
+jenisData[kategori]?.[sub] || [];
+
+jenis.innerHTML =
+'<option value="">Tidak Ada</option>';
+
+if(list.length===0){
+
+    if(jenisContainer){
+
+        jenisContainer.style.display="none";
+
+    }
+
+    return;
+
+}
+
+if(jenisContainer){
+
+    jenisContainer.style.display="block";
+
+}
+
+list.forEach(item=>{
+
+    jenis.innerHTML += `
+        <option value="${item}">
+            ${item}
+        </option>
+    `;
 
 });
 
@@ -918,7 +1144,359 @@ function logout(){
 
 </script>
 
+<!-- Preview Dokumen -->
+
+<div class="modal fade" id="previewModal">
+
+<div class="modal-dialog modal-xl">
+
+<div class="modal-content">
+
+<div class="modal-header">
+
+<h5 class="modal-title">
+
+Preview Dokumen
+
+</h5>
+
+<button
+class="btn-close"
+data-bs-dismiss="modal">
+</button>
+
+</div>
+
+<div class="modal-body p-0">
+
+<iframe
+id="previewFrame"
+style="width:100%;height:80vh;border:none;">
+</iframe>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ==================================================
+MODAL SURAT MASUK
+================================================== -->
+
+<div class="modal fade"
+id="modalSuratMasuk"
+tabindex="-1">
+
+<div class="modal-dialog modal-lg">
+
+<div class="modal-content">
+
+<div class="modal-header">
+
+<h5 class="modal-title">
+
+Tambah Surat Masuk
+
+</h5>
+
+<button
+type="button"
+class="btn-close"
+data-bs-dismiss="modal">
+</button>
+
+</div>
+
+<div class="modal-body">
+
+<form id="formSuratMasuk">
+
+<div class="row g-3">
+
+<div class="col-md-6">
+
+<label class="form-label">
+
+Nomor Surat
+
+</label>
+
+<input
+type="text"
+id="smNomor"
+class="form-control"
+required>
+
+</div>
+
+<div class="col-md-6">
+
+<label class="form-label">
+
+Tanggal
+
+</label>
+
+<input
+type="date"
+id="smTanggal"
+class="form-control"
+required>
+
+</div>
+
+<div class="col-md-12">
+
+<label class="form-label">
+
+Asal Surat
+
+</label>
+
+<input
+type="text"
+id="smAsal"
+class="form-control"
+required>
+
+</div>
+
+<div class="col-md-12">
+
+<label class="form-label">
+
+Perihal
+
+</label>
+
+<input
+type="text"
+id="smPerihal"
+class="form-control">
+
+</div>
+
+<div class="col-md-12">
+
+<label class="form-label">
+
+File Surat (PDF)
+
+</label>
+
+<input
+type="file"
+id="smFile"
+class="form-control"
+accept=".pdf"
+required>
+
+<div class="form-text">
+
+Format yang diperbolehkan hanya PDF.
+
+</div>
+
+</div>
+
+</div>
+
+</form>
+
+</div>
+
+<div class="modal-footer">
+
+<button
+type="button"
+class="btn btn-secondary"
+data-bs-dismiss="modal">
+
+Batal
+
+</button>
+
+<button
+type="button"
+class="btn btn-success"
+id="btnSimpanSuratMasuk">
+
+<i class="bi bi-floppy me-2"></i>
+
+Simpan
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ==================================================
+MODAL SURAT KELUAR
+================================================== -->
+
+<div class="modal fade"
+id="modalSuratKeluar"
+tabindex="-1">
+
+<div class="modal-dialog modal-lg">
+
+<div class="modal-content">
+
+<div class="modal-header">
+
+<h5 class="modal-title">
+
+Tambah Surat Keluar
+
+</h5>
+
+<button
+type="button"
+class="btn-close"
+data-bs-dismiss="modal">
+</button>
+
+</div>
+
+<div class="modal-body">
+
+<form id="formSuratKeluar">
+
+<div class="row g-3">
+
+<div class="col-md-6">
+
+<label class="form-label">
+
+Nomor Surat
+
+</label>
+
+<input
+type="text"
+id="skNomor"
+class="form-control"
+required>
+
+</div>
+
+<div class="col-md-6">
+
+<label class="form-label">
+
+Tanggal
+
+</label>
+
+<input
+type="date"
+id="skTanggal"
+class="form-control"
+required>
+
+</div>
+
+<div class="col-md-12">
+
+<label class="form-label">
+
+Tujuan Surat
+
+</label>
+
+<input
+type="text"
+id="skTujuan"
+class="form-control"
+required>
+
+</div>
+
+<div class="col-md-12">
+
+<label class="form-label">
+
+Perihal
+
+</label>
+
+<input
+type="text"
+id="skPerihal"
+class="form-control">
+
+</div>
+
+<div class="col-md-12">
+
+<label class="form-label">
+
+File Surat (PDF)
+
+</label>
+
+<input
+type="file"
+id="skFile"
+class="form-control"
+accept=".pdf"
+required>
+
+<div class="form-text">
+
+Format yang diperbolehkan hanya PDF.
+
+</div>
+
+</div>
+
+</div>
+
+</form>
+
+</div>
+
+<div class="modal-footer">
+
+<button
+type="button"
+class="btn btn-secondary"
+data-bs-dismiss="modal">
+
+Batal
+
+</button>
+
+<button
+type="button"
+class="btn btn-warning"
+id="btnSimpanSuratKeluar">
+
+<i class="bi bi-floppy me-2"></i>
+
+Simpan
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
 <script src="assets/js/api.js"></script>
+
+<script src="assets/js/uploadService.js"></script>
 
 <script src="assets/js/admin.js"></script>
 
@@ -929,6 +1507,10 @@ function logout(){
 loadAdminInventaris();
 
 loadDashboard();
+
+loadAdminSuratMasuk();
+
+loadAdminSuratKeluar();
 
 </script>
 

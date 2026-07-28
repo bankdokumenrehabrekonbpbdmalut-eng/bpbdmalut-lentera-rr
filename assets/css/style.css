@@ -515,3 +515,380 @@ SARAN DAN MASUKAN
     line-height:1.8;
 
 }
+
+/* =====================================================
+   FINAL MOBILE FIX - LENTERA RR
+   Aman, hanya berlaku untuk layar HP
+===================================================== */
+@media (max-width:768px){
+
+    /* 1. Mencegah halaman melebar ke kanan */
+    html,
+    body{
+        overflow-x:hidden !important;
+        width:100%;
+    }
+
+    section,
+    .container,
+    .container-fluid,
+    .row{
+        max-width:100%;
+        overflow-x:hidden;
+    }
+
+    /* 2. Menyamakan ukuran kedua logo */
+    .navbar-brand img{
+        width:28px !important;
+        height:28px !important;
+        object-fit:contain;
+        display:block;
+    }
+
+    /* 3. Banner penuh layar HP */
+    .carousel-item img{
+        width:100%;
+        height:220px;
+        object-fit:cover;
+    }
+
+    /* 4. Caption Banner */
+    .carousel-caption{
+        left:8% !important;
+        right:8% !important;
+        bottom:20px !important;
+        padding:0;
+    }
+
+    .carousel-caption h1{
+        font-size:28px !important;
+        line-height:1.2;
+        margin-bottom:8px;
+    }
+
+    .carousel-caption p{
+        font-size:15px !important;
+        line-height:1.4;
+        margin-bottom:12px;
+    }
+
+    .carousel-caption .btn{
+        font-size:15px;
+        padding:10px 20px;
+    }
+
+}
+
+/* ==================================================
+   RESPONSIVE MOBILE FIX - HERO SECTION
+   Aman (hanya layar ≤768px)
+================================================== */
+
+@media (max-width:768px){
+
+    /* Mencegah halaman melebar */
+    html,
+    body{
+        overflow-x:hidden;
+    }
+
+    /* Banner */
+    #heroCarousel{
+        overflow:hidden;
+    }
+
+    #heroCarousel .hero-image{
+        height:320px;
+        object-fit:cover;
+    }
+
+    /* Caption */
+    #heroCarousel .carousel-caption{
+
+    position:absolute;
+
+    inset:0;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    width:100%;
+
+    height:100%;
+
+    padding:0 20px;
+
+    margin:0;
+
+    left:0 !important;
+
+    right:0 !important;
+
+    top:0;
+
+    bottom:0;
+
+    transform:none;
+
+    text-align:center;
+
+}
+
+    /* Container caption */
+    #heroCarousel .hero-content{
+
+    width:100%;
+
+    max-width:100%;
+
+    margin:0 auto;
+
+    padding:0 10px;
+
+}
+
+    /* Judul */
+    #heroCarousel .hero-title,
+#heroCarousel .carousel-caption h1{
+
+    font-size:26px;
+
+    line-height:1.25;
+
+    margin-bottom:12px;
+
+    white-space:normal;
+
+}
+
+    /* Subjudul */
+    #heroCarousel .hero-subtitle,
+    #heroCarousel .carousel-caption p{
+
+        font-size:15px;
+
+        line-height:1.45;
+
+        margin-bottom:15px;
+
+        white-space:normal;
+
+        word-break:normal;
+
+    }
+
+    /* Tombol */
+    #heroCarousel .carousel-caption .btn{
+
+        font-size:15px;
+
+        padding:10px 22px;
+
+        margin:0 !important;
+
+    }
+
+    #heroCarousel .carousel-caption .mt-4{
+
+    margin-top:14px !important;
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:center;
+
+}
+
+#heroCarousel .carousel-caption .btn{
+
+    margin:0 !important;
+
+}
+
+    /* Hilangkan margin bootstrap */
+    #heroCarousel .mt-4{
+
+        margin-top:10px !important;
+
+    }
+
+}
+
+/* =====================================================
+   MOBILE FIX NAVBAR
+   Aman - hanya layar <=768px
+===================================================== */
+
+@media (max-width:768px){
+
+    .navbar-brand{
+
+        display:flex;
+        align-items:center;
+        width:100%;
+
+    }
+
+    .navbar-brand > div:last-child{
+
+        flex:1;
+        min-width:0;
+
+    }
+
+    .navbar-brand strong{
+
+        display:block;
+        font-size:17px;
+        line-height:1.1;
+
+    }
+
+    .navbar-brand span{
+
+        display:block;
+
+        font-size:11px;
+
+        line-height:1.25;
+
+        white-space:normal;
+
+        word-break:break-word;
+
+    }
+
+}
+
+@media (max-width:768px){
+
+    .navbar-brand img{
+
+        width:26px;
+
+        height:26px;
+
+        object-fit:contain;
+
+    }
+
+}
+
+@media (max-width:768px){
+
+    .navbar-brand .me-3{
+
+        margin-right:.5rem !important;
+
+    }
+
+}
+
+/* =====================================================
+   TABLET FIX (iPad, Galaxy Tab, Zenbook Fold)
+   Tidak mempengaruhi HP maupun Desktop
+===================================================== */
+
+@media (min-width:821px) and (max-width:1024px){
+
+    /* Tinggi banner */
+    #heroCarousel .hero-image{
+        height:420px;
+        object-fit:cover;
+    }
+
+    /* Posisi caption */
+    #heroCarousel .carousel-caption{
+
+        top:50%;
+        left:50%;
+        transform:translate(-50%,-50%);
+
+        width:85%;
+
+        padding:0;
+
+    }
+
+    /* Judul */
+    #heroCarousel .hero-title,
+    #heroCarousel .carousel-caption h1{
+
+        font-size:38px;
+        line-height:1.2;
+        margin-bottom:12px;
+
+    }
+
+    /* Subjudul */
+    #heroCarousel .hero-subtitle,
+    #heroCarousel .carousel-caption p{
+
+        font-size:18px;
+        line-height:1.45;
+        margin-bottom:18px;
+
+    }
+
+    /* Tombol */
+    #heroCarousel .carousel-caption .mt-4{
+
+        margin-top:12px !important;
+
+    }
+
+    #heroCarousel .carousel-caption .btn{
+
+        font-size:17px;
+        padding:10px 26px;
+
+    }
+
+}
+
+@media (min-width:768px) and (max-width:820px){
+
+    #heroCarousel .hero-image{
+        height:320px;
+    }
+
+    #heroCarousel .carousel-caption{
+        inset:0;
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        align-items:center;
+        width:100%;
+        padding:0 24px;
+        text-align:center;
+        transform:none;
+        left:0 !important;
+        right:0 !important;
+    }
+
+    #heroCarousel .hero-title,
+    #heroCarousel .carousel-caption h1{
+        font-size:28px;
+        line-height:1.2;
+        margin-bottom:10px;
+    }
+
+    #heroCarousel .hero-subtitle,
+    #heroCarousel .carousel-caption p{
+        font-size:15px;
+        line-height:1.45;
+        margin-bottom:14px;
+    }
+
+    #heroCarousel .carousel-caption .btn{
+        font-size:15px;
+        padding:10px 22px;
+    }
+
+}

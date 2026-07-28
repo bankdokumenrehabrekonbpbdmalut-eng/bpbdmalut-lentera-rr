@@ -77,7 +77,7 @@ Semua Kategori
 
 const kategori = [
 ...new Set(
-inventaris.map(d=>d.jenis)
+inventaris.map(d=>d.kategori)
 )
 ].sort();
 
@@ -104,9 +104,9 @@ dataAktif=[...inventaris];
 
 }else{
 
-dataAktif=
+dataAktif =
 inventaris.filter(
-d=>d.jenis===nilai
+d=>d.kategori===nilai
 );
 
 }
@@ -151,21 +151,33 @@ tbody.innerHTML+=`
 
 <td>${item.judul}</td>
 
-<td>${item.jenis}</td>
+<td>${item.kategori || "-"}</td>
 
-<td>${item.kategori}</td>
+<td>${item.subkategori || "-"}</td>
 
-<td>${item.tahun||"-"}</td>
+<td>${item.tahun || "-"}</td>
 
 <td>
 
+<div class="btn-group">
+
 <button
-class="btn btn-sm btn-primary"
+class="btn btn-sm btn-outline-primary"
 onclick="previewDokumen('${item.fileId}')">
 
 <i class="bi bi-eye"></i>
 
 </button>
+
+<button
+class="btn btn-sm btn-outline-success"
+onclick="downloadDokumen('${item.fileId}')">
+
+<i class="bi bi-download"></i>
+
+</button>
+
+</div>
 
 </td>
 
@@ -373,27 +385,19 @@ const statistik={};
 
 inventaris.forEach(item=>{
 
-const jenis =
-(item.jenis||"Lainnya").trim();
+const kategori =
+(item.kategori || "Lainnya").trim();
 
-statistik[jenis] =
-(statistik[jenis]||0)+1;
+statistik[kategori] =
+(statistik[kategori]||0)+1;
 
 });
 
 Object.keys(statistik)
 .sort()
-.forEach(jenis=>{
+.forEach(kategori=>{
 
-container.innerHTML += `
-
-<div class="col-lg-3 col-md-4 col-sm-6">
-
-<div class="card h-100 shadow-sm border-0">
-
-<div class="card-body text-center">
-
-const ikon = {
+const ikon={
 
 "Produk Hukum":"bi-bank2",
 
@@ -411,17 +415,29 @@ const ikon = {
 
 };
 
-const iconClass = ikon[jenis] || "bi-folder-fill";
+const iconClass =
+ikon[kategori] ||
+"bi-folder-fill";
+
+container.innerHTML += `
+
+<div class="col-lg-3 col-md-4 col-sm-6">
+
+<div class="card h-100 shadow-sm border-0">
+
+<div class="card-body text-center">
+
+<i class="bi ${iconClass} display-5 text-primary"></i>
 
 <h5 class="mt-3">
 
-${jenis}
+${kategori}
 
 </h5>
 
 <h2 class="fw-bold text-primary">
 
-${statistik[jenis]}
+${statistik[kategori]}
 
 </h2>
 
@@ -440,5 +456,26 @@ Dokumen
 `;
 
 });
+
+}
+
+/*==================================================
+DOWNLOAD DOKUMEN
+==================================================*/
+
+function downloadDokumen(fileId){
+
+    if(!fileId){
+
+        alert("File tidak ditemukan.");
+
+        return;
+
+    }
+
+    window.open(
+        `https://drive.google.com/uc?export=download&id=${fileId}`,
+        "_blank"
+    );
 
 }

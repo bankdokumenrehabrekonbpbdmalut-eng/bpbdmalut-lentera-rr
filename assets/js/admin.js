@@ -274,11 +274,24 @@ PREVIEW DOKUMEN
 
 function previewDokumen(fileId){
 
-document.getElementById("previewFrame").src=
+if(!fileId){
+
+alert("File tidak ditemukan.");
+
+return;
+
+}
+
+document
+.getElementById("previewFrame").src=
+
 `https://drive.google.com/file/d/${fileId}/preview`;
 
-new bootstrap.Modal(
+bootstrap.Modal
+.getOrCreateInstance(
+
 document.getElementById("previewModal")
+
 ).show();
 
 }
@@ -290,7 +303,13 @@ EDIT DOKUMEN
 function editDokumen(id){
 
 const item =
-adminInventaris.find(d=>d.id===id);
+adminInventaris.find(
+d => String(d.id) === String(id)
+);
+
+console.log("ID diklik :", id);
+
+console.log("Data ditemukan :", item);
 
 if(!item){
 
@@ -303,8 +322,14 @@ return;
 document.getElementById("judul").value =
 item.judul;
 
+document.getElementById("nomor").value =
+item.nomor || "";
+
+document.getElementById("tentang").value =
+item.tentang || "";
+
 document.getElementById("kategori").value =
-item.jenis;
+item.kategori;
 
 document
 .getElementById("kategori")
@@ -313,15 +338,28 @@ document
 requestAnimationFrame(()=>{
 
 document.getElementById("subkategori").value =
-item.kategori;
+item.subkategori || "";
+
+document
+.getElementById("subkategori")
+.dispatchEvent(
+new Event("change")
+);
+
+requestAnimationFrame(()=>{
+
+document.getElementById("jenis").value =
+item.jenis || "";
+
+});
 
 });
 
 document.getElementById("tahun").value =
-item.tahun;
+item.tahun || "";
 
 document.getElementById("link").value =
-item.link;
+item.link || "";
 
 document
 .getElementById("btnSimpanDokumen")
@@ -345,21 +383,52 @@ document
 .getElementById("btnTambahDokumen")
 ?.addEventListener("click",()=>{
 
-document.getElementById("formDokumen").reset();
+    document.getElementById("modalTitle").innerText =
+    "Tambah Dokumen";
 
-document
-.getElementById("btnSimpanDokumen")
-.dataset.mode="tambah";
+    document.getElementById("formDokumen").reset();
 
-document
-.getElementById("btnSimpanDokumen")
-.dataset.id="";
+    const namaFile =
+    document.getElementById("namaFile");
 
-new bootstrap.Modal(
-document.getElementById("modalDokumen")
-).show();
+    if(namaFile){
+
+    namaFile.innerHTML =
+    "Belum ada file dipilih.";
+
+    }
+
+    document.getElementById("btnSimpanDokumen")
+    .dataset.mode="inventaris";
+
+    document.getElementById("btnSimpanDokumen")
+    .dataset.id="";
 
 });
+
+/*==================================================
+UBAH FILE MENJADI BASE64
+==================================================*/
+
+function fileToBase64(file){
+
+return new Promise((resolve,reject)=>{
+
+const reader=new FileReader();
+
+reader.onload=()=>{
+
+resolve(reader.result);
+
+};
+
+reader.onerror=reject;
+
+reader.readAsDataURL(file);
+
+});
+
+}
 
 /*==================================================
 SIMPAN DOKUMEN
@@ -367,85 +436,194 @@ SIMPAN DOKUMEN
 
 document
 .getElementById("btnSimpanDokumen")
-?.addEventListener("click",simpanDokumen);
+?.addEventListener("click", simpanDokumen);
 
 async function simpanDokumen(){
 
-const mode =
-document.getElementById("btnSimpanDokumen")
-.dataset.mode;
+console.log("=== SIMPAN DOKUMEN ===");
 
-const id =
-document.getElementById("btnSimpanDokumen")
-.dataset.id;
+    try{
 
-const data={
+        const btn =
+        document.getElementById("btnSimpanDokumen");
 
-id:id,
+        const mode = btn.dataset.mode;
 
-kategori:
-document.getElementById("kategori").value,
+        const id = btn.dataset.id || "";
 
-subkategori:
-document.getElementById("subkategori").value,
+        const file =
+        document.getElementById("fileDokumen").files[0];
 
-judul:
-document.getElementById("judul").value,
+        const link =
+        document.getElementById("link").value.trim();
 
-tahun:
-document.getElementById("tahun").value,
+        /*==========================
+        VALIDASI
+        ==========================*/
 
-link:
-document.getElementById("link").value
+        if(!file && !link){
 
-};
+            alert(
+            "Silakan upload dokumen atau masukkan Link Google Drive."
+            );
 
-try{
+            return;
 
-let hasil;
+        }
 
-if(mode==="inventaris"){
+        let base64 = "";
+        let namaFile = "";
+        let mime = "";
 
-hasil = await tambahDokumen(data);
+        /*==========================
+        FILE DARI KOMPUTER
+        ==========================*/
+
+        if(file){
+
+            const MAX_SIZE =
+            10 * 1024 * 1024;
+
+            if(file.size > MAX_SIZE){
+
+                alert(
+                "Ukuran file maksimal 10 MB."
+                );
+
+                return;
+
+            }
+
+            base64 =
+            await fileToBase64(file);
+
+            namaFile =
+            file.name;
+
+            mime =
+            file.type;
+
+        }
+
+        console.log({
+        kategori: document.getElementById("kategori")?.value,
+        subkategori: document.getElementById("subkategori")?.value,
+        link: document.getElementById("link")?.value,
+        file: document.getElementById("fileDokumen")?.files[0]
+    });
+
+        /*==========================
+        DATA
+        ==========================*/
+
+        const jenisElement =
+        document.getElementById("jenis");
+
+        const data={
+
+        id:id,
+
+        kategori:
+        document.getElementById("kategori").value,
+
+        subkategori:
+        document.getElementById("subkategori").value,
+
+        jenis:
+        document.getElementById("jenis").value,
+
+        judul:
+        document.getElementById("judul").value.trim(),
+
+        nomor:
+        document.getElementById("nomor").value.trim(),
+
+        tentang:
+        document.getElementById("tentang").value.trim(),
+
+        tahun:
+        document.getElementById("tahun").value,
+
+        link:link,
+
+        namaFile:namaFile,
+
+        mime:mime,
+
+        base64:base64
+
+    };
+
+        let hasil;
+
+        if(mode==="edit"){
+
+        hasil =
+        await editDokumen(data);
+
+    }else{
+
+        console.log("DATA YANG DIKIRIM:");
+        console.log(data);
+
+        hasil =
+        await tambahDokumen(data);
+
+    }
+
+        if(!hasil.status){
+
+        alert(
+
+        hasil.pesan ||
+
+        "Gagal menyimpan dokumen."
+
+    );
+
+    return;
+
+    }
+
+        if(!hasil.status){
+
+            alert(
+
+            hasil.pesan ||
+
+            "Gagal menyimpan dokumen."
+
+            );
+
+            return;
+
+        }
+
+        alert("Dokumen berhasil disimpan.");
+
+        bootstrap.Modal
+        .getInstance(
+        document.getElementById("modalDokumen")
+        )
+        ?.hide();
+
+        document
+        .getElementById("formDokumen")
+        ?.reset();
+
+        await loadAdminInventaris();
+
+        await loadDashboard();
+
+        }catch(err){
+
+        console.error(err);
+
+        alert(err.message);
+
+    }
 
 }
-
-else if(mode==="masuk"){
-
-hasil = await tambahSuratMasuk(data);
-
-}
-
-else if(mode==="keluar"){
-
-hasil = await tambahSuratKeluar(data);
-
-}
-
-alert(hasil.pesan);
-
-bootstrap.Modal
-.getInstance(
-document.getElementById("modalDokumen")
-).hide();
-
-document.getElementById("formDokumen").reset();
-
-loadAdminInventaris();
-
-}catch(err){
-
-console.error(err);
-
-alert("Gagal menyimpan data.");
-
-}
-
-}
-
-const mode =
-document.getElementById("btnSimpanDokumen")
-.dataset.mode || "inventaris";
 
 /*==================================================
 HAPUS DOKUMEN
@@ -459,11 +637,22 @@ return;
 
 try{
 
-const hasil = await deleteDokumen(id);
+const hasil=
+await deleteDokumen(id);
+
+if(!hasil.status){
 
 alert(hasil.pesan);
 
-loadAdminInventaris();
+return;
+
+}
+
+alert(hasil.pesan);
+
+await loadAdminInventaris();
+
+await loadDashboard();
 
 }catch(err){
 
@@ -591,7 +780,50 @@ filterAdmin
 
 document
 .getElementById("kategori")
-?.addEventListener("change", isiSubkategori);
+.addEventListener("change",function(){
+
+const kategori=this.value;
+
+const select=
+document.getElementById("subkategori");
+
+select.innerHTML="";
+
+(subkategoriData[kategori]||[])
+.forEach(item=>{
+
+select.innerHTML+=`
+
+<option value="${item}">
+
+${item}
+
+</option>
+
+`;
+
+});
+
+const jenisContainer =
+document.getElementById("jenisContainer");
+
+const jenis =
+document.getElementById("jenis");
+
+if(jenisContainer){
+
+    jenisContainer.style.display = "none";
+
+}
+
+if(jenis){
+
+    jenis.innerHTML =
+    '<option value="">Pilih Jenis</option>';
+
+}
+
+});
 
 document
 .getElementById("adminTahun")
@@ -655,52 +887,317 @@ console.error(err);
 }
 
 /*==================================================
-SURAT MASUK
+MODAL SURAT MASUK
 ==================================================*/
 
-console.log("Admin JS Loaded");
+document
+.querySelectorAll("#btnTambahMasuk")
+.forEach(btn=>{
 
-const btnMasuk =
-document.getElementById("btnTambahMasuk");
+btn.addEventListener("click",()=>{
 
-console.log(btnMasuk);
+const form =
+document.getElementById("formSuratMasuk");
 
-btnMasuk?.addEventListener("click",()=>{
+if(form){
 
-console.log("Klik Surat Masuk");
+form.reset();
 
-document.getElementById("modalTitle").innerText =
-"Tambah Surat Masuk";
+}
 
-document.getElementById("formDokumen").reset();
+bootstrap.Modal
+.getOrCreateInstance(
 
-document.getElementById("btnSimpanDokumen")
-.dataset.mode="masuk";
+document.getElementById("modalSuratMasuk")
 
-new bootstrap.Modal(
-document.getElementById("modalDokumen")
 ).show();
+
+});
 
 });
 
 /*==================================================
-SURAT KELUAR
+MODAL SURAT KELUAR
 ==================================================*/
 
 document
-.getElementById("btnTambahKeluar")
-?.addEventListener("click",()=>{
+.querySelectorAll("#btnTambahKeluar")
+.forEach(btn=>{
 
-document.getElementById("modalTitle").innerText =
-"Tambah Surat Keluar";
+btn.addEventListener("click",()=>{
 
-document.getElementById("formDokumen").reset();
+const form =
+document.getElementById("formSuratKeluar");
 
-document.getElementById("btnSimpanDokumen")
-.dataset.mode="keluar";
+if(form){
 
-new bootstrap.Modal(
-document.getElementById("modalDokumen")
+form.reset();
+
+}
+
+bootstrap.Modal
+.getOrCreateInstance(
+
+document.getElementById("modalSuratKeluar")
+
 ).show();
 
 });
+
+});
+
+/*==================================================
+LOAD SURAT MASUK
+==================================================*/
+
+async function loadAdminSuratMasuk(){
+
+    const tbody=document.getElementById("suratMasukTable");
+
+    if(!tbody) return;
+
+    try{
+
+        const data=await getSuratMasuk();
+
+        if(data.length===0){
+
+            tbody.innerHTML=`
+            <tr>
+                <td colspan="5" class="text-center">
+                    Belum ada data.
+                </td>
+            </tr>`;
+            return;
+        }
+
+        tbody.innerHTML="";
+
+        data.forEach((item,index)=>{
+
+            tbody.innerHTML+=`
+            <tr>
+
+                <td>${index+1}</td>
+
+                <td>${item.nomor||"-"}</td>
+
+                <td>${item.asal||"-"}</td>
+
+                <td>${item.tanggal||"-"}</td>
+
+                <td>
+
+                    <button
+                        class="btn btn-sm btn-outline-primary"
+                        onclick="previewDokumen('${item.fileId}')">
+
+                        <i class="bi bi-eye"></i>
+
+                    </button>
+
+                </td>
+
+            </tr>
+            `;
+
+        });
+
+    }catch(err){
+
+        console.error(err);
+
+    }
+
+}
+
+/*==================================================
+LOAD SURAT KELUAR
+==================================================*/
+
+async function loadAdminSuratKeluar(){
+
+    const tbody=document.getElementById("suratKeluarTable");
+
+    if(!tbody) return;
+
+    try{
+
+        const data=await getSuratKeluar();
+
+        if(data.length===0){
+
+            tbody.innerHTML=`
+            <tr>
+                <td colspan="5" class="text-center">
+                    Belum ada data.
+                </td>
+            </tr>`;
+            return;
+        }
+
+        tbody.innerHTML="";
+
+        data.forEach((item,index)=>{
+
+            tbody.innerHTML+=`
+            <tr>
+
+                <td>${index+1}</td>
+
+                <td>${item.nomor||"-"}</td>
+
+                <td>${item.tujuan||"-"}</td>
+
+                <td>${item.tanggal||"-"}</td>
+
+                <td>
+
+                    <button
+                        class="btn btn-sm btn-outline-primary"
+                        onclick="previewDokumen('${item.fileId}')">
+
+                        <i class="bi bi-eye"></i>
+
+                    </button>
+
+                </td>
+
+            </tr>
+            `;
+
+        });
+
+    }catch(err){
+
+        console.error(err);
+
+    }
+
+}
+
+/*==================================================
+SIMPAN SURAT MASUK
+==================================================*/
+
+document
+.getElementById("btnSimpanSuratMasuk")
+?.addEventListener("click",simpanSuratMasuk);
+
+async function simpanSuratMasuk(){
+
+const nomor =
+document.getElementById("smNomor").value.trim();
+
+const asal =
+document.getElementById("smAsal").value.trim();
+
+const tanggal =
+document.getElementById("smTanggal").value;
+
+const perihal =
+document.getElementById("smPerihal").value.trim();
+
+const file =
+document.getElementById("smFile").files[0];
+
+console.log(file);
+console.log(typeof file);
+console.log(file instanceof File);
+
+if(
+!nomor ||
+!asal ||
+!tanggal ||
+!file
+){
+
+alert("Lengkapi seluruh data terlebih dahulu.");
+
+return;
+
+}
+
+const base64 =
+await fileToBase64(file);
+
+const hasil =
+await uploadFile({
+
+namaFile:file.name,
+
+mime:file.type,
+
+base64:base64
+
+});
+
+console.log(hasil);
+
+alert(hasil.status ?
+"Upload berhasil."
+:
+"Upload gagal.");
+
+}
+
+/*==================================================
+SIMPAN SURAT KELUAR
+==================================================*/
+
+document
+.getElementById("btnSimpanSuratKeluar")
+?.addEventListener("click",simpanSuratKeluar);
+
+async function simpanSuratKeluar(){
+
+const nomor =
+document.getElementById("skNomor").value.trim();
+
+const tujuan =
+document.getElementById("skTujuan").value.trim();
+
+const tanggal =
+document.getElementById("skTanggal").value;
+
+const perihal =
+document.getElementById("skPerihal").value.trim();
+
+const file =
+document.getElementById("skFile").files[0];
+
+if(
+!nomor ||
+!tujuan ||
+!tanggal ||
+!file
+){
+
+alert("Lengkapi seluruh data terlebih dahulu.");
+
+return;
+
+}
+
+const base64 =
+await fileToBase64(file);
+
+const hasil =
+await uploadFile({
+
+namaFile:file.name,
+
+mime:file.type,
+
+base64:base64
+
+});
+
+console.log(hasil);
+
+alert(hasil.status ?
+"Upload berhasil."
+:
+"Upload gagal.");
+
+}
