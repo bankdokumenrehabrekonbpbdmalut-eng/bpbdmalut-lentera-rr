@@ -11,13 +11,13 @@ let semuaDokumen = [];
 INISIALISASI
 ==================================================*/
 
-function isiQuickSearch(data){
+function initQuickSearch(data){
 
-semuaDokumen = data;
+    semuaDokumen = data;
 
-isiKategori(data);
+    isiQuickKategori(data);
 
-isiTahun(data);
+    isiQuickTahun(data);
 
 }
 
@@ -25,7 +25,10 @@ isiTahun(data);
 KATEGORI
 ==================================================*/
 
-function isiKategori(data){
+function isiQuickKategori(data){
+
+console.log("Isi kategori");
+console.log(data.map(d => d.kategori));
 
 const select=document.getElementById("quickKategori");
 
@@ -73,7 +76,7 @@ ${item}
 TAHUN
 ==================================================*/
 
-function isiTahun(data){
+function isiQuickTahun(data){
 
 const select=document.getElementById("quickTahun");
 

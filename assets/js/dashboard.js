@@ -146,39 +146,55 @@ ISI FILTER QUICK SEARCH
 
 function isiQuickSearch(data){
 
-const kategori = document.getElementById("quickKategori");
-const tahun = document.getElementById("quickTahun");
+    const kategori = document.getElementById("quickKategori");
+    const tahun = document.getElementById("quickTahun");
 
-if(kategori){
+    if(kategori){
 
-const daftarKategori = [...new Set(data.map(d=>d.kategori).filter(Boolean))];
+        const daftarKategori = [
+            ...new Set(
+                data
+                    .map(d => d.kategori)
+                    .filter(Boolean)
+            )
+        ];
 
-daftarKategori.sort();
+        daftarKategori.sort();
 
-kategori.innerHTML = `<option value="">Semua Kategori</option>`;
+        kategori.innerHTML =
+            `<option value="">Semua Kategori</option>`;
 
-daftarKategori.forEach(k=>{
+        daftarKategori.forEach(k=>{
 
-kategori.innerHTML += `<option value="${k}">${k}</option>`;
+            kategori.innerHTML +=
+                `<option value="${k}">${k}</option>`;
 
-});
+        });
 
-}
+    }
 
-if(tahun){
+    if(tahun){
 
-const daftarTahun = [...new Set(data.map(d=>d.tahun).filter(Boolean))];
+        const daftarTahun = [
+            ...new Set(
+                data
+                    .map(d => d.tahun)
+                    .filter(Boolean)
+            )
+        ];
 
-daftarTahun.sort().reverse();
+        daftarTahun.sort().reverse();
 
-tahun.innerHTML = `<option value="">Semua Tahun</option>`;
+        tahun.innerHTML =
+            `<option value="">Semua Tahun</option>`;
 
-daftarTahun.forEach(t=>{
+        daftarTahun.forEach(t=>{
 
-tahun.innerHTML += `<option value="${t}">${t}</option>`;
+            tahun.innerHTML +=
+                `<option value="${t}">${t}</option>`;
 
-});
+        });
 
-}
+    }
 
 }

@@ -64,31 +64,33 @@ ISI FILTER KATEGORI
 
 function isiKategori(){
 
-const select =
-document.getElementById("filterKategori");
+    const select =
+        document.getElementById("quickKategori");
 
-if(!select) return;
+    if(!select) return;
 
-select.innerHTML = `
-<option value="">
-Semua Kategori
-</option>
-`;
+    select.innerHTML =
+        '<option value="">Semua Kategori</option>';
 
-const kategori = [
-...new Set(
-inventaris.map(d=>d.kategori)
-)
-].sort();
+    const kategori = [
+        ...new Set(
+            inventaris
+                .map(item => (item.kategori || "").trim())
+                .filter(item => item !== "")
+        )
+    ].sort();
 
-kategori.forEach(item=>{
+    kategori.forEach(item => {
 
-select.innerHTML +=
-`<option value="${item}">
-${item}
-</option>`;
+        const option =
+            document.createElement("option");
 
-});
+        option.value = item;
+        option.textContent = item;
+
+        select.appendChild(option);
+
+    });
 
 }
 

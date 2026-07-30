@@ -108,33 +108,6 @@ return await response.json();
 
 }
 
-async function editDokumen(data){
-
-const response=
-await fetch(API_URL,{
-
-method:"POST",
-
-headers:{
-
-"Content-Type":"application/json"
-
-},
-
-body:JSON.stringify({
-
-action:"editDokumen",
-
-data:data
-
-})
-
-});
-
-return await response.json();
-
-}
-
 /*==================================================
 UPLOAD FILE
 (Digunakan oleh Modul Surat.

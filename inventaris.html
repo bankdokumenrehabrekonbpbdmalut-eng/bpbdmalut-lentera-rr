@@ -593,14 +593,11 @@ if(sub){
 
 const list=[
 ...new Set(
-inventaris.map(
-d=>d.kategori
-)
-)
-].sort();
+inventaris.map(d=>d.subkategori)
+
+)].sort();
 
 list.forEach(item=>{
-
 sub.innerHTML+=
 `<option>${item}</option>`;
 

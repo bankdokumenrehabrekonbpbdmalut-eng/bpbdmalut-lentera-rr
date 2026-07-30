@@ -95,53 +95,39 @@ try{
 
 function editDokumen(data){
 
-const sheet =
-getSheet(CONFIG.SHEET_INVENTARIS);
+    const sheet =
+    getSheet(CONFIG.SHEET_INVENTARIS);
 
-const values =
-sheet.getDataRange().getValues();
+    const values =
+    sheet.getDataRange().getValues();
 
-let folderPath = data.kategori || "";
+    for(let i=1;i<values.length;i++){
 
-if(data.subkategori){
+    if(values[i][0]==data.id){
 
-folderPath += "/" + data.subkategori;
+    sheet.getRange(i+1,2,1,10).setValues([[
 
-}
+    data.kategori,
 
-if(data.jenis){
+    data.subkategori,
 
-folderPath += "/" + data.jenis;
+    data.jenis,
 
-}
+    data.judul,
 
-for(let i=1;i<values.length;i++){
+    data.nomor || "",
 
-if(values[i][0]==data.id){
+    data.tahun || "",
 
-sheet.getRange(i+1,2,1,10).setValues([[
+    data.tentang || "",
 
-data.kategori,
+    values[i][7],
 
-data.subkategori,
+    values[i][8],
 
-data.jenis,
+    values[i][9]
 
-data.judul,
-
-data.nomor || "",
-
-data.tahun || "",
-
-data.tentang || "",
-
-folderPath,
-
-values[i][8],
-
-values[i][9]
-
-]]);
+    ]]);
 
 return ContentService
 .createTextOutput(
@@ -150,72 +136,6 @@ JSON.stringify({
 status:true,
 
 pesan:"Dokumen berhasil diperbarui."
-
-})
-)
-.setMimeType(
-ContentService.MimeType.JSON
-);
-
-}
-
-}
-
-return ContentService
-.createTextOutput(
-JSON.stringify({
-
-status:false,
-
-pesan:"Dokumen tidak ditemukan."
-
-})
-)
-.setMimeType(
-ContentService.MimeType.JSON
-);
-
-}
-
-function hapusDokumen(id){
-
-const sheet=
-getSheet(CONFIG.SHEET_INVENTARIS);
-
-const values=
-sheet.getDataRange().getValues();
-
-for(let i=1;i<values.length;i++){
-
-if(values[i][0]==id){
-
-const fileId=values[i][8];
-
-try{
-
-if(fileId){
-
-DriveApp
-.getFileById(fileId)
-.setTrashed(true);
-
-}
-
-}catch(err){
-
-Logger.log(err);
-
-}
-
-sheet.deleteRow(i+1);
-
-return ContentService
-.createTextOutput(
-JSON.stringify({
-
-status:true,
-
-pesan:"Dokumen berhasil dihapus."
 
 })
 )
@@ -537,76 +457,6 @@ function tambahDokumen(data){
 
     }
 
-    function editDokumen(data){
-
-const sheet =
-getSheet(CONFIG.SHEET_INVENTARIS);
-
-const values =
-sheet.getDataRange().getValues();
-
-for(let i=1;i<values.length;i++){
-
-if(values[i][0]==data.id){
-
-sheet.getRange(i+1,2,1,10).setValues([[
-
-data.kategori,
-
-data.subkategori,
-
-data.jenis,
-
-data.judul,
-
-data.nomor || "",
-
-data.tahun || "",
-
-data.tentang || "",
-
-values[i][7],
-
-values[i][8],
-
-values[i][9]
-
-]]);
-
-return ContentService
-.createTextOutput(
-JSON.stringify({
-
-status:true,
-
-pesan:"Dokumen berhasil diperbarui."
-
-})
-)
-.setMimeType(
-ContentService.MimeType.JSON
-);
-
-}
-
-}
-
-return ContentService
-.createTextOutput(
-JSON.stringify({
-
-status:false,
-
-pesan:"Dokumen tidak ditemukan."
-
-})
-)
-.setMimeType(
-ContentService.MimeType.JSON
-);
-
-}
-
     /*=========================================
     UPLOAD DARI PORTAL
     =========================================*/
@@ -665,7 +515,7 @@ ContentService.MimeType.JSON
 
       data.tentang || "",         // H Tentang
 
-      folder,                     // I Folder
+      folderPath,                     // I Folder
 
       fileId,                     // J File ID
 
