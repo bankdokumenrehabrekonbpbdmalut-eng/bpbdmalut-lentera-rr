@@ -27,9 +27,6 @@ KATEGORI
 
 function isiQuickKategori(data){
 
-console.log("Isi kategori");
-console.log(data.map(d => d.kategori));
-
 const select=document.getElementById("quickKategori");
 
 if(!select) return;
