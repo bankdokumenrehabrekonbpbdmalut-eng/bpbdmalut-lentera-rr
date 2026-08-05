@@ -41,6 +41,33 @@ async function loadAdminInventaris(){
         adminInventaris =
         await getInventaris();
 
+        console.log(
+        "KATEGORI/FOLDER LEVEL 1:",
+        [
+            ...new Set(
+                adminInventaris
+                    .map(item =>
+                        String(
+                            item.jenis ??
+                            item.kategori ??
+                            ""
+                        )
+                    )
+                    .filter(Boolean)
+            )
+        ].sort()
+    );
+
+        console.table(
+        adminInventaris.map(item => ({
+            judul: item.judul,
+            jenis: item.jenis,
+            kategori: item.kategori,
+            subkategori: item.subkategori,
+            tahun: item.tahun
+        }))
+    );
+
         document
         .getElementById("kategori")
         .dispatchEvent(new Event("change"));
@@ -692,16 +719,14 @@ const cocokJudul =
 .includes(keyword);
 
 const cocokKategori =
-kategori==="Semua" ||
-item.jenis===kategori;
+kategori === "Semua" ||
+(item.jenis || item.kategori) === kategori;
 
 const cocokTahun =
 tahun==="Semua" ||
 String(item.tahun)===tahun;
 
-return cocokJudul &&
-cocokKategori &&
-cocokTahun;
+return cocokJudul && cocokKategori && cocokTahun;
 
 });
 
@@ -712,51 +737,68 @@ renderAdminTable();
 }
 
 /*==================================================
-ISI FILTER
+ISI FILTER ADMIN
+KATEGORI MENGIKUTI FOLDER LEVEL 1 GOOGLE DRIVE
 ==================================================*/
 
 function isiFilterAdmin(){
 
-const kategori =
-document.getElementById("adminKategori");
+    const kategori =
+        document.getElementById("adminKategori");
 
-const tahun =
-document.getElementById("adminTahun");
+    const tahun =
+        document.getElementById("adminTahun");
 
-if(!kategori || !tahun) return;
+    if(!kategori || !tahun) return;
 
-kategori.innerHTML =
-'<option value="Semua">Semua Kategori</option>';
+    /*==================================================
+    KATEGORI
+    ==================================================*/
 
-tahun.innerHTML =
-'<option value="Semua">Semua Tahun</option>';
+    kategori.innerHTML =
+        '<option value="Semua">Semua Kategori</option>';
 
-const listKategori =
-[...new Set(adminInventaris.map(i=>i.jenis))];
+    MASTER_KATEGORI.forEach(item => {
 
-listKategori.sort().forEach(k=>{
+        kategori.innerHTML += `
+            <option value="${item}">
+                ${item}
+            </option>
+        `;
 
-kategori.innerHTML +=
-`<option value="${k}">${k}</option>`;
+    });
 
-});
+    /*==================================================
+    TAHUN
+    ==================================================*/
 
-const listTahun =
-[...new Set(
-adminInventaris
-.map(i=>i.tahun)
-.filter(Boolean)
-)];
+    tahun.innerHTML =
+        '<option value="Semua">Semua Tahun</option>';
 
-listTahun
-.sort()
-.reverse()
-.forEach(t=>{
+    const listTahun = [
 
-tahun.innerHTML +=
-`<option value="${t}">${t}</option>`;
+        ...new Set(
 
-});
+            adminInventaris
+                .map(item => item.tahun)
+                .filter(Boolean)
+
+        )
+
+    ];
+
+    listTahun
+        .sort()
+        .reverse()
+        .forEach(item => {
+
+            tahun.innerHTML += `
+                <option value="${item}">
+                    ${item}
+                </option>
+            `;
+
+        });
 
 }
 
@@ -1073,131 +1115,5 @@ async function loadAdminSuratKeluar(){
         console.error(err);
 
     }
-
-}
-
-/*==================================================
-SIMPAN SURAT MASUK
-==================================================*/
-
-document
-.getElementById("btnSimpanSuratMasuk")
-?.addEventListener("click",simpanSuratMasuk);
-
-async function simpanSuratMasuk(){
-
-const nomor =
-document.getElementById("smNomor").value.trim();
-
-const asal =
-document.getElementById("smAsal").value.trim();
-
-const tanggal =
-document.getElementById("smTanggal").value;
-
-const perihal =
-document.getElementById("smPerihal").value.trim();
-
-const file =
-document.getElementById("smFile").files[0];
-
-console.log(file);
-console.log(typeof file);
-console.log(file instanceof File);
-
-if(
-!nomor ||
-!asal ||
-!tanggal ||
-!file
-){
-
-alert("Lengkapi seluruh data terlebih dahulu.");
-
-return;
-
-}
-
-const base64 =
-await fileToBase64(file);
-
-const hasil =
-await uploadFile({
-
-namaFile:file.name,
-
-mime:file.type,
-
-base64:base64
-
-});
-
-console.log(hasil);
-
-alert(hasil.status ?
-"Upload berhasil."
-:
-"Upload gagal.");
-
-}
-
-/*==================================================
-SIMPAN SURAT KELUAR
-==================================================*/
-
-document
-.getElementById("btnSimpanSuratKeluar")
-?.addEventListener("click",simpanSuratKeluar);
-
-async function simpanSuratKeluar(){
-
-const nomor =
-document.getElementById("skNomor").value.trim();
-
-const tujuan =
-document.getElementById("skTujuan").value.trim();
-
-const tanggal =
-document.getElementById("skTanggal").value;
-
-const perihal =
-document.getElementById("skPerihal").value.trim();
-
-const file =
-document.getElementById("skFile").files[0];
-
-if(
-!nomor ||
-!tujuan ||
-!tanggal ||
-!file
-){
-
-alert("Lengkapi seluruh data terlebih dahulu.");
-
-return;
-
-}
-
-const base64 =
-await fileToBase64(file);
-
-const hasil =
-await uploadFile({
-
-namaFile:file.name,
-
-mime:file.type,
-
-base64:base64
-
-});
-
-console.log(hasil);
-
-alert(hasil.status ?
-"Upload berhasil."
-:
-"Upload gagal.");
 
 }

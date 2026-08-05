@@ -23,28 +23,91 @@ async function fileToBase64(file){
 
 }
 
-async function uploadFile(file){
+/*=========================================
+UPLOAD FILE
+LENTERA RR
+=========================================*/
 
-    const base64 = await fileToBase64(file);
+async function uploadFile(file, jenisSurat){
 
-    const response = await fetch(API_URL,{
+    if(!file){
 
-        method:"POST",
+        throw new Error(
+            "File belum dipilih."
+        );
 
-        body:JSON.stringify({
+    }
 
-            action:"uploadFile",
+    if(
+        jenisSurat !== "masuk" &&
+        jenisSurat !== "keluar"
+    ){
 
-            nama:file.name,
+        throw new Error(
+            "Jenis surat tidak valid."
+        );
 
-            mime:file.type,
+    }
 
-            data:base64
+    const base64 =
+        await fileToBase64(file);
+
+    const params =
+        new URLSearchParams();
+
+    params.append(
+        "action",
+        "uploadFile"
+    );
+
+    params.append(
+        "data",
+        JSON.stringify({
+
+            base64: base64,
+
+            mime: file.type,
+
+            namaFile: file.name,
+
+            jenisSurat: jenisSurat
 
         })
+    );
 
-    });
+    const response =
+        await fetch(API_URL, {
 
-    return await response.json();
+            method: "POST",
+
+            body: params
+
+        });
+
+    if(!response.ok){
+
+        throw new Error(
+            "Upload gagal. Status server: " +
+            response.status
+        );
+
+    }
+
+    const hasil =
+        await response.json();
+
+    if(
+        !hasil ||
+        !hasil.status
+    ){
+
+        throw new Error(
+            hasil?.pesan ||
+            "File gagal diupload."
+        );
+
+    }
+
+    return hasil;
 
 }

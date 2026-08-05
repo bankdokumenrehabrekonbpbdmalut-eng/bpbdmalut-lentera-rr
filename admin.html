@@ -27,7 +27,7 @@ if(!sessionStorage.getItem("login")){
 
 </head>
 
-<link rel="icon" type="image/png" sizes="32x32" href="assets/images/logo-bpbd.png">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon.png">
 
 <body class="bg-light">
 
@@ -787,15 +787,45 @@ Kategori
 id="kategori"
 class="form-select">
 
-<option>Produk Hukum</option>
+<option value="Produk Hukum">
+Produk Hukum
+</option>
 
-<option>Pedoman</option>
+<option value="Pedoman RR">
+Pedoman RR
+</option>
 
-<option>Perencanaan</option>
+<option value="Perencanaan">
+Perencanaan
+</option>
 
-<option>Administrasi</option>
+<option value="Administrasi">
+Administrasi
+</option>
 
-<option>Template</option>
+<option value="Template">
+Template
+</option>
+
+<option value="Surat Masuk">
+Surat Masuk
+</option>
+
+<option value="Surat Keluar">
+Surat Keluar
+</option>
+
+<option value="Media">
+Media
+</option>
+
+<option value="Referensi Atau Bahan Bacaan">
+Referensi Atau Bahan Bacaan
+</option>
+
+<option value="Arsip">
+Arsip
+</option>
 
 </select>
 
@@ -927,218 +957,270 @@ Simpan
 
 <script>
 
-const subkategoriData={
+const subkategoriData = {
 
-"Produk Hukum":[
-"Undang-Undang",
-"Peraturan Pemerintah",
-"Peraturan Presiden",
-"Permen",
-"Peraturan BNPB",
-"Perda",
-"Pergub",
-"SK Kepala BPBD"
-],
+    "Produk Hukum": [
+        "Undang-Undang",
+        "Peraturan Pemerintah, Peraturan Presiden, Peraturan Menteri",
+        "Peraturan BNPB",
+        "Peraturan Daerah dan Peraturan Gubernur Maluku Utara",
+        "SK & SE Kepala BPBD",
+        "SK Gubernur"
+    ],
 
-"Pedoman":[
-"Pedoman"
-],
+    "Pedoman RR": [],
 
-"Perencanaan":[
-"JITUPASNA",
-"R3P"
-],
+    "Perencanaan": [
+        "JITUPASNA",
+        "R3P"
+    ],
 
-"Administrasi":[
-"Surat",
-"Berita Acara",
-"Notulen",
-"Kontrak",
-"Laporan",
-"Administrasi Pendukung Lainnya"
-],
+    "Administrasi": [
+        "Kontrak",
+        "Laporan Kegiatan",
+        "Surat Tugas",
+        "Surat",
+        "Berita Acara",
+        "Notulen",
+        "Administrasi Pendukung Lainnya"
+    ],
 
-"Template":[
-"Surat",
-"Berita Acara",
-"Notulen",
-"Kontrak",
-"Laporan",
-"Administrasi Pendukung Lainnya"
-]
+    "Template": [
+        "Surat",
+        "Berita Acara",
+        "Notulen",
+        "Kontrak",
+        "Laporan",
+        "Administrasi Pendukung Lainnya"
+    ]
 
 };
 
-const jenisData={
+/*
+====================================================
+ DATA JENIS DOKUMEN
+====================================================
+*/
 
-"Produk Hukum":{
+const jenisData = {
 
-"Undang-Undang":[],
+    "Produk Hukum": {
 
-"Peraturan Pemerintah":[],
+        "Undang-Undang": [],
 
-"Peraturan Presiden":[],
+        "Peraturan Pemerintah, Peraturan Presiden, Peraturan Menteri": [],
 
-"Permen":[],
+        "Peraturan BNPB": [],
 
-"Peraturan BNPB":[],
+        "Peraturan Daerah dan Peraturan Gubernur Maluku Utara": [],
 
-"Perda":[],
+        "SK & SE Kepala BPBD": [
+            "SK Tim",
+            "SK Pejabat",
+            "SK Transisi",
+            "SK Tanggap Darurat"
+        ],
 
-"Pergub":[],
+        "SK Gubernur": [
+            "SK Tim",
+            "SK Pejabat",
+            "SK Transisi",
+            "SK Tanggap Darurat"
+        ]
 
-"SK Kepala BPBD":[]
+    },
 
-},
+    "Pedoman RR": {},
 
-"Pedoman":{
+    "Perencanaan": {
 
-"Pedoman":[]
+        "JITUPASNA": [],
 
-},
+        "R3P": []
 
-"Perencanaan":{
+    },
 
-"JITUPASNA":[],
+    "Administrasi": {
 
-"R3P":[]
+        "Kontrak": [],
 
-},
+        "Laporan Kegiatan": [],
 
-"Administrasi":{
+        "Surat Tugas": [],
 
-"Surat":[],
+        "Surat": [],
 
-"Berita Acara":[],
+        "Berita Acara": [],
 
-"Notulen":[],
+        "Notulen": [],
 
-"Kontrak":[],
+        "Administrasi Pendukung Lainnya": []
 
-"Laporan":[],
+    },
 
-"Administrasi Pendukung Lainnya":[]
+    "Template": {
 
-},
+        "Surat": [],
 
-"Template":{
+        "Berita Acara": [],
 
-"Surat":[],
+        "Notulen": [],
 
-"Berita Acara":[],
+        "Kontrak": [],
 
-"Notulen":[],
+        "Laporan": [],
 
-"Kontrak":[],
-
-"Laporan":[],
-
-"Administrasi Pendukung Lainnya":[]
-
-}
-
-};
-
-document
-.getElementById("kategori")
-.addEventListener("change",function(){
-
-const kategori=this.value;
-
-const subkategori=
-document.getElementById("subkategori");
-
-console.log("Kategori dipilih :", kategori);
-
-console.log(subkategoriData);
-
-subkategori.innerHTML="";
-
-const daftarSubkategori =
-subkategoriData[kategori] || [];
-
-daftarSubkategori.forEach(item=>{
-
-    subkategori.innerHTML += `
-        <option value="${item}">
-            ${item}
-        </option>
-    `;
-
-});
-
-if(daftarSubkategori.length>0){
-
-    subkategori.selectedIndex=0;
-
-}
-
-subkategori.dispatchEvent(
-new Event("change")
-);
-
-});
-
-document
-.getElementById("subkategori")
-.addEventListener("change",function(){
-
-const kategori=
-
-document.getElementById("kategori").value;
-
-const sub=this.value;
-
-const jenis=
-
-document.getElementById("jenis");
-
-jenis.innerHTML="";
-
-const jenisContainer =
-document.getElementById("jenisContainer");
-
-const list =
-jenisData[kategori]?.[sub] || [];
-
-jenis.innerHTML =
-'<option value="">Tidak Ada</option>';
-
-if(list.length===0){
-
-    if(jenisContainer){
-
-        jenisContainer.style.display="none";
+        "Administrasi Pendukung Lainnya": []
 
     }
 
-    return;
+};
+
+/*
+====================================================
+ EVENT KATEGORI
+====================================================
+*/
+
+const kategoriElement =
+    document.getElementById("kategori");
+
+const subkategoriElement =
+    document.getElementById("subkategori");
+
+if (kategoriElement && subkategoriElement) {
+
+    kategoriElement.addEventListener("change", function () {
+
+        const kategori = this.value;
+
+        console.log("Kategori dipilih :", kategori);
+
+        subkategoriElement.innerHTML =
+            '<option value="">Pilih Subkategori</option>';
+
+        const daftarSubkategori =
+            subkategoriData[kategori] || [];
+
+        daftarSubkategori.forEach(function (item) {
+
+            const option =
+                document.createElement("option");
+
+            option.value = item;
+            option.textContent = item;
+
+            subkategoriElement.appendChild(option);
+
+        });
+
+        /*
+        Jika kategori tidak mempunyai subkategori,
+        jangan memaksa memilih nilai.
+        */
+
+        if (daftarSubkategori.length > 0) {
+
+            subkategoriElement.selectedIndex = 1;
+
+        }
+
+        subkategoriElement.dispatchEvent(
+            new Event("change")
+        );
+
+    });
 
 }
 
-if(jenisContainer){
+/*
+====================================================
+ EVENT SUBKATEGORI
+====================================================
+*/
 
-    jenisContainer.style.display="block";
+if (subkategoriElement) {
+
+    subkategoriElement.addEventListener(
+        "change",
+        function () {
+
+            const kategoriElement =
+                document.getElementById("kategori");
+
+            const jenisElement =
+                document.getElementById("jenis");
+
+            const jenisContainer =
+                document.getElementById("jenisContainer");
+
+            if (!kategoriElement || !jenisElement) {
+                return;
+            }
+
+            const kategori =
+                kategoriElement.value;
+
+            const sub =
+                this.value;
+
+            jenisElement.innerHTML =
+                '<option value="">Tidak Ada</option>';
+
+            const list =
+                jenisData[kategori]?.[sub] || [];
+
+            /*
+            Jika tidak ada pilihan jenis,
+            sembunyikan container.
+            */
+
+            if (list.length === 0) {
+
+                if (jenisContainer) {
+                    jenisContainer.style.display = "none";
+                }
+
+                return;
+            }
+
+            /*
+            Jika terdapat jenis,
+            tampilkan kembali container.
+            */
+
+            if (jenisContainer) {
+                jenisContainer.style.display = "block";
+            }
+
+            list.forEach(function (item) {
+
+                const option =
+                    document.createElement("option");
+
+                option.value = item;
+                option.textContent = item;
+
+                jenisElement.appendChild(option);
+
+            });
+
+        }
+    );
 
 }
 
-list.forEach(item=>{
+/*
+====================================================
+ LOGOUT
+====================================================
+*/
 
-    jenis.innerHTML += `
-        <option value="${item}">
-            ${item}
-        </option>
-    `;
-
-});
-
-});
-
-function logout(){
+function logout() {
 
     sessionStorage.clear();
 
-    window.location="login.html";
+    window.location = "login.html";
 
 }
 
@@ -1283,7 +1365,7 @@ class="form-control">
 
 <label class="form-label">
 
-File Surat (PDF)
+File Surat
 
 </label>
 
@@ -1291,12 +1373,12 @@ File Surat (PDF)
 type="file"
 id="smFile"
 class="form-control"
-accept=".pdf"
+accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png"
 required>
 
 <div class="form-text">
 
-Format yang diperbolehkan hanya PDF.
+Format yang diperbolehkan: PDF, Word, Excel, PowerPoint, JPG, JPEG, dan PNG.
 
 </div>
 
@@ -1439,7 +1521,7 @@ class="form-control">
 
 <label class="form-label">
 
-File Surat (PDF)
+File Surat
 
 </label>
 
@@ -1447,12 +1529,12 @@ File Surat (PDF)
 type="file"
 id="skFile"
 class="form-control"
-accept=".pdf"
+accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png"
 required>
 
 <div class="form-text">
 
-Format yang diperbolehkan hanya PDF.
+Format yang diperbolehkan: PDF, Word, Excel, PowerPoint, JPG, JPEG, dan PNG.
 
 </div>
 
@@ -1496,11 +1578,13 @@ Simpan
 
 <script src="assets/js/api.js"></script>
 
+<script src="assets/js/adminSurat.js"></script>
+
+<script src="assets/js/masterData.js"></script>
+
 <script src="assets/js/uploadService.js"></script>
 
 <script src="assets/js/admin.js"></script>
-
-<script src="assets/js/adminSurat.js"></script>
 
 <script>
 

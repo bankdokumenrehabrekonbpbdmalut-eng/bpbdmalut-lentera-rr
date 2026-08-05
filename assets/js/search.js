@@ -22,50 +22,46 @@ function initQuickSearch(data){
 }
 
 /*==================================================
-KATEGORI
+KATEGORI QUICK SEARCH
+SESUAI FOLDER LEVEL 1 GOOGLE DRIVE
 ==================================================*/
 
 function isiQuickKategori(data){
 
-const select=document.getElementById("quickKategori");
+    const select =
+        document.getElementById("quickKategori");
 
-if(!select) return;
+    if(!select){
 
-const kategori=[
+        return;
 
-...new Set(
+    }
 
-data.map(d=>d.kategori)
 
-.filter(Boolean)
+    select.innerHTML = `
 
-)
+        <option value="">
 
-].sort();
+            Semua Kategori
 
-select.innerHTML=`
+        </option>
 
-<option value="">
+    `;
 
-Semua Kategori
 
-</option>
+    MASTER_KATEGORI.forEach(kategori => {
 
-`;
+        select.innerHTML += `
 
-kategori.forEach(item=>{
+            <option value="${kategori}">
 
-select.innerHTML+=`
+                ${kategori}
 
-<option value="${item}">
+            </option>
 
-${item}
+        `;
 
-</option>
-
-`;
-
-});
+    });
 
 }
 
@@ -157,11 +153,14 @@ const cocokJudul=
 
 .includes(keyword);
 
-const cocokKategori=
+const kategoriItem =
+getKategoriUtama(item);
+
+const cocokKategori =
 
 !kategori ||
 
-item.kategori===kategori;
+(item.jenis || item.kategori) === kategori;
 
 const cocokTahun=
 

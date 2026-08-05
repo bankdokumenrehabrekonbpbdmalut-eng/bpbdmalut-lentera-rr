@@ -322,6 +322,12 @@ Semua Subkategori
 
 </div>
 
+<div
+id="filterFolderDinamis"
+class="col-md-3">
+
+</div>
+
 <div class="col-md-2">
 
 <button
@@ -507,30 +513,6 @@ border:none;">
 
 </div>
 
-<!-- FOOTER -->
-
-<div class="footer-app">
-
-<hr>
-
-Portal LENTERA RR © 2026
-
-<br>
-
-Bidang Rehabilitasi dan Rekonstruksi
-
-<br>
-
-BPBD Provinsi Maluku Utara
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<script src="assets/js/api.js"></script>
-
-<script src="assets/js/inventaris.js"></script>
-
 <script>
 
 document.addEventListener("DOMContentLoaded",async()=>{
@@ -584,26 +566,477 @@ Math.max(...tahun)
 }
 
 /*==============================
+STRUKTUR FOLDER GOOGLE DRIVE
+==============================*/
+
+let strukturFolder = [];
+
+try{
+
+    strukturFolder =
+        await getFolderStructure();
+
+    console.log(
+        "STRUKTUR FOLDER GOOGLE DRIVE:",
+        strukturFolder
+    );
+
+}catch(error){
+
+    console.error(
+        "Gagal mengambil struktur folder:",
+        error
+    );
+
+}
+
+
+/*==============================
+UTILITAS NAMA FOLDER
+==============================*/
+
+function namaFolderBersih(nama){
+
+    return String(nama || "")
+        .replace(/^\d+[\.\-\s]*/, "")
+        .trim();
+
+}
+
+
+/*==============================
+AMBIL CHILD FOLDER
+==============================*/
+
+function ambilChildFolder(parentPath){
+
+    const hasil = [];
+
+    strukturFolder.forEach(folder=>{
+
+        const path = String(
+            folder.path || ""
+        );
+
+        const parent = path
+            .split("/")
+            .slice(0,-1)
+            .join("/");
+
+        if(parent === parentPath){
+
+            hasil.push(folder);
+
+        }
+
+    });
+
+    return hasil;
+
+}
+
+
+/*==============================
 FILTER SUBKATEGORI
 ==============================*/
 
-const sub=document.getElementById("filterSubkategori");
+function isiSubkategori(parentPath){
 
-if(sub){
+    const sub =
+        document.getElementById(
+            "filterSubkategori"
+        );
 
-const list=[
-...new Set(
-inventaris.map(d=>d.subkategori)
+    if(!sub) return;
 
-)].sort();
+    sub.innerHTML =
+        `<option value="">
+            Semua Subkategori
+        </option>`;
 
-list.forEach(item=>{
-sub.innerHTML+=
-`<option>${item}</option>`;
+    const daftar =
+        ambilChildFolder(parentPath);
 
-});
+    daftar.forEach(folder=>{
+
+        const option =
+            document.createElement("option");
+
+        option.value =
+            folder.path;
+
+        option.textContent =
+            namaFolderBersih(folder.name);
+
+        sub.appendChild(option);
+
+    });
 
 }
+
+
+/*==============================
+FILTER FOLDER LEVEL LANJUTAN
+==============================*/
+
+function isiFolderDinamis(parentPath){
+
+    const container =
+        document.getElementById(
+            "filterFolderDinamis"
+        );
+
+    if(!container) return;
+
+    container.innerHTML = "";
+
+    let pathSaatIni = parentPath;
+
+    while(true){
+
+        const daftar =
+            ambilChildFolder(pathSaatIni);
+
+        if(daftar.length === 0){
+
+            break;
+
+        }
+
+        const select =
+            document.createElement("select");
+
+        select.className =
+            "form-select mb-2";
+
+        select.innerHTML =
+            `<option value="">
+                Semua Folder
+            </option>`;
+
+        daftar.forEach(folder=>{
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                folder.path;
+
+            option.textContent =
+                namaFolderBersih(
+                    folder.name
+                );
+
+            select.appendChild(option);
+
+        });
+
+        container.appendChild(select);
+
+        select.addEventListener(
+            "change",
+            function(){
+
+                const path =
+                    this.value;
+
+                const selects =
+                    container.querySelectorAll(
+                        "select"
+                    );
+
+                const index =
+                    Array.from(selects)
+                    .indexOf(this);
+
+                while(
+                    container.children.length >
+                    index + 1
+                ){
+
+                    container.lastElementChild
+                        .remove();
+
+                }
+
+                if(!path){
+
+                    renderDenganFilter();
+
+                    return;
+
+                }
+
+                isiFolderBerikutnya(path);
+
+                renderDenganFilter();
+
+            }
+        );
+
+        break;
+
+    }
+
+}
+
+
+/*==============================
+FOLDER LEVEL BERIKUTNYA
+==============================*/
+
+function isiFolderBerikutnya(parentPath){
+
+    const container =
+        document.getElementById(
+            "filterFolderDinamis"
+        );
+
+    if(!container) return;
+
+    const daftar =
+        ambilChildFolder(parentPath);
+
+    if(daftar.length === 0){
+
+        return;
+
+    }
+
+    const select =
+        document.createElement("select");
+
+    select.className =
+        "form-select mb-2";
+
+    select.innerHTML =
+        `<option value="">
+            Semua Folder
+        </option>`;
+
+    daftar.forEach(folder=>{
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value =
+            folder.path;
+
+        option.textContent =
+            namaFolderBersih(
+                folder.name
+            );
+
+        select.appendChild(option);
+
+    });
+
+    container.appendChild(select);
+
+    select.addEventListener(
+        "change",
+        function(){
+
+            const selects =
+                container.querySelectorAll(
+                    "select"
+                );
+
+            const index =
+                Array.from(selects)
+                .indexOf(this);
+
+            while(
+                container.children.length >
+                index + 1
+            ){
+
+                container.lastElementChild
+                    .remove();
+
+            }
+
+            if(this.value){
+
+                isiFolderBerikutnya(
+                    this.value
+                );
+
+            }
+
+            renderDenganFilter();
+
+        }
+    );
+
+}
+
+
+/*==============================
+ISI KATEGORI DARI GOOGLE DRIVE
+==============================*/
+
+function isiKategoriDrive(){
+
+    const select =
+        document.getElementById(
+            "filterKategori"
+        );
+
+    if(!select) return;
+
+    select.innerHTML =
+        `<option value="">
+            Semua Kategori
+        </option>`;
+
+    const root =
+        strukturFolder.find(
+            folder =>
+                !String(folder.path || "")
+                .includes("/")
+        );
+
+    if(!root) return;
+
+    const daftar =
+        ambilChildFolder(
+            root.path
+        );
+
+    daftar.forEach(folder=>{
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value =
+            folder.path;
+
+        option.textContent =
+            namaFolderBersih(
+                folder.name
+            );
+
+        select.appendChild(option);
+
+    });
+
+}
+
+
+/*==============================
+EVENT KATEGORI
+==============================*/
+
+document
+.getElementById("filterKategori")
+?.addEventListener(
+    "change",
+    function(){
+
+        const path =
+            this.value;
+
+        const sub =
+            document.getElementById(
+                "filterSubkategori"
+            );
+
+        const container =
+            document.getElementById(
+                "filterFolderDinamis"
+            );
+
+        if(sub){
+
+            sub.innerHTML =
+                `<option value="">
+                    Semua Subkategori
+                </option>`;
+
+        }
+
+        if(container){
+
+            container.innerHTML = "";
+
+        }
+
+        if(path){
+
+            isiSubkategori(path);
+
+        }
+
+        renderDenganFilter();
+
+    }
+);
+
+
+/*==============================
+EVENT SUBKATEGORI
+==============================*/
+
+document
+.getElementById("filterSubkategori")
+?.addEventListener(
+    "change",
+    function(){
+
+        const path =
+            this.value;
+
+        const container =
+            document.getElementById(
+                "filterFolderDinamis"
+            );
+
+        if(container){
+
+            container.innerHTML = "";
+
+        }
+
+        if(path){
+
+            isiFolderBerikutnya(path);
+
+        }
+
+        renderDenganFilter();
+
+    }
+    
+);
+
+/*==============================
+PENCARIAN DOKUMEN
+==============================*/
+
+document
+.getElementById("searchDokumen")
+?.addEventListener(
+    "input",
+    function(){
+
+        renderDenganFilter();
+
+    }
+);
+
+
+/*==============================
+INISIALISASI KATEGORI DRIVE
+==============================*/
+
+isiKategoriDrive();
 
 /*==============================
 RESET
@@ -629,7 +1062,32 @@ dataAktif=[...inventaris];
 
 currentPage=1;
 
-renderInventaris();
+const folderDinamis =
+document.getElementById(
+    "filterFolderDinamis"
+);
+
+if(folderDinamis){
+
+    folderDinamis.innerHTML="";
+
+}
+
+const sub =
+document.getElementById(
+    "filterSubkategori"
+);
+
+if(sub){
+
+    sub.innerHTML =
+        `<option value="">
+            Semua Subkategori
+        </option>`;
+
+}
+
+renderDenganFilter();
 
 });
 
@@ -637,7 +1095,91 @@ renderInventaris();
 
 </script>
 
+<!-- ======================================================
+MODAL DETAIL DOKUMEN
+====================================================== -->
+
+<div
+class="modal fade"
+id="detailModal"
+tabindex="-1"
+aria-labelledby="detailModalLabel"
+aria-hidden="true">
+
+<div
+class="modal-dialog modal-lg modal-dialog-centered">
+
+<div class="modal-content">
+
+<div class="modal-header">
+
+<h5
+class="modal-title"
+id="detailModalLabel">
+
+Detail Dokumen
+
+</h5>
+
+<button
+type="button"
+class="btn-close"
+data-bs-dismiss="modal"
+aria-label="Close">
+
+</button>
+
+</div>
+
+<div
+class="modal-body"
+id="detailDokumenBody">
+
+</div>
+
+<div class="modal-footer">
+
+<button
+type="button"
+class="btn btn-secondary"
+data-bs-dismiss="modal">
+
+Tutup
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="assets/js/api.js"></script>
+
+<script src="assets/js/inventaris.js"></script>
+
+<!-- FOOTER -->
+
+<div class="footer-app">
+
+<hr>
+
+Portal LENTERA RR © 2026
+
+<br>
+
+Bidang Rehabilitasi dan Rekonstruksi
+
+<br>
+
+BPBD Provinsi Maluku Utara
+
+</div>
+
 </body>
 
 </html>
-

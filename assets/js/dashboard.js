@@ -27,13 +27,56 @@ const data = await getInventaris();
 
 loadInventarisDashboard(data);
 
-loadStatistik(data);
-
 isiQuickSearch(data);
+
+
+/*==================================================
+SURAT MASUK TERBARU
+==================================================*/
+
+try{
+
+const suratMasuk =
+    await getSuratMasuk();
+
+loadSuratMasukDashboard(suratMasuk);
 
 }catch(error){
 
-console.error(error);
+console.error(
+    "ERROR LOAD SURAT MASUK DASHBOARD:",
+    error
+);
+
+}
+
+
+/*==================================================
+SURAT KELUAR TERBARU
+==================================================*/
+
+try{
+
+const suratKeluar =
+    await getSuratKeluar();
+
+loadSuratKeluarDashboard(suratKeluar);
+
+}catch(error){
+
+console.error(
+    "ERROR LOAD SURAT KELUAR DASHBOARD:",
+    error
+);
+
+}
+
+}catch(error){
+
+console.error(
+    "ERROR LOAD DASHBOARD:",
+    error
+);
 
 }
 
@@ -104,97 +147,467 @@ onclick="detailDokumenById('${item.fileId}')">
 }
 
 /*==================================================
-STATISTIK
+SURAT MASUK TERBARU
 ==================================================*/
 
-function loadStatistik(data){
+function loadSuratMasukDashboard(data){
 
-const statistik = {};
+    const tbody =
+        document.getElementById(
+            "suratMasukDashboard"
+        );
 
-data.forEach(item=>{
+    if(!tbody) return;
 
-const key = item.kategori || "Lainnya";
 
-statistik[key] = (statistik[key] || 0) + 1;
+    tbody.innerHTML = "";
 
-});
 
-setStat("statProdukHukum",statistik["Produk Hukum"]);
-setStat("statPedoman",statistik["Pedoman"]);
-setStat("statJitupasna",statistik["JITUPASNA"]);
-setStat("statR3P",statistik["R3P"]);
-setStat("statAdministrasi",statistik["Administrasi"]);
-setStat("statTemplate",statistik["Template"]);
+    if(
+        !Array.isArray(data) ||
+        data.length === 0
+    ){
+
+        tbody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="2"
+                    class="text-center"
+                >
+
+                    Belum ada data
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    data
+    .slice(0,5)
+    .forEach(item=>{
+
+        const fileId =
+            item.fileId || "";
+
+        const link =
+            item.link || "";
+
+
+        const tombolPreview =
+            fileId
+            ?
+            `
+            <button
+                class="btn btn-sm btn-outline-primary me-1"
+                onclick="previewDokumen('${fileId}')"
+                title="Preview"
+            >
+
+                <i class="bi bi-eye"></i>
+
+            </button>
+            `
+            :
+            "";
+
+
+        const tombolDownload =
+            link
+            ?
+            `
+            <a
+                href="${link}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-sm btn-outline-success"
+                title="Download"
+            >
+
+                <i class="bi bi-download"></i>
+
+            </a>
+            `
+            :
+            "";
+
+
+        tbody.innerHTML += `
+
+            <tr>
+
+                <td>
+
+                    ${
+                        item.nomor || "-"
+                    }
+
+                </td>
+
+                <td>
+
+                    ${
+                        item.tanggal || "-"
+                    }
+
+                </td>
+
+                <td>
+
+                    ${tombolPreview}
+
+                    ${tombolDownload}
+
+                </td>
+
+            </tr>
+
+        `;
+
+    });
 
 }
 
-function setStat(id,nilai){
 
-const el=document.getElementById(id);
+/*==================================================
+SURAT KELUAR TERBARU
+==================================================*/
 
-if(el){
+function loadSuratKeluarDashboard(data){
 
-el.textContent = nilai || 0;
+    const tbody =
+        document.getElementById(
+            "suratKeluarDashboard"
+        );
+
+    if(!tbody) return;
+
+
+    tbody.innerHTML = "";
+
+
+    if(
+        !Array.isArray(data) ||
+        data.length === 0
+    ){
+
+        tbody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="2"
+                    class="text-center"
+                >
+
+                    Belum ada data
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    data
+    .slice(0,5)
+    .forEach(item=>{
+
+        const fileId =
+            item.fileId || "";
+
+        const link =
+            item.link || "";
+
+
+        const tombolPreview =
+            fileId
+            ?
+            `
+            <button
+                class="btn btn-sm btn-outline-primary me-1"
+                onclick="previewDokumen('${fileId}')"
+                title="Preview"
+            >
+
+                <i class="bi bi-eye"></i>
+
+            </button>
+            `
+            :
+            "";
+
+
+        const tombolDownload =
+            link
+            ?
+            `
+            <a
+                href="${link}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-sm btn-outline-success"
+                title="Download"
+            >
+
+                <i class="bi bi-download"></i>
+
+            </a>
+            `
+            :
+            "";
+
+
+        tbody.innerHTML += `
+
+            <tr>
+
+                <td>
+
+                    ${
+                        item.nomor || "-"
+                    }
+
+                </td>
+
+                <td>
+
+                    ${
+                        item.tanggal || "-"
+                    }
+
+                </td>
+
+                <td>
+
+                    ${tombolPreview}
+
+                    ${tombolDownload}
+
+                </td>
+
+            </tr>
+
+        `;
+
+    });
 
 }
+
+/*==================================================
+STATISTIK DOKUMEN
+==================================================*/
+
+async function loadStatistikDokumen(){
+
+    try{
+
+        const data = await getInventaris();
+
+        if(!Array.isArray(data)){
+
+            throw new Error(
+                "Data inventaris tidak valid."
+            );
+
+        }
+
+
+        /*==========================================
+        HITUNG BERDASARKAN KATEGORI DRIVE
+        ==========================================*/
+
+        const statistik = {
+
+            "Produk Hukum": 0,
+
+            "Pedoman": 0,
+
+            "Perencanaan": 0,
+
+            "Administrasi": 0,
+
+            "Template": 0
+
+        };
+
+
+        data.forEach(item => {
+
+            const kategori =
+                String(
+                    item.kategori || ""
+                )
+                .replace(
+                    /^\d+[\.\-\s]*/,
+                    ""
+                )
+                .trim();
+
+
+            if(
+                Object.prototype.hasOwnProperty.call(
+                    statistik,
+                    kategori
+                )
+            ){
+
+                statistik[kategori]++;
+
+            }
+
+        });
+
+
+        /*==========================================
+        TAMPILKAN STATISTIK
+        ==========================================*/
+
+        const elemen = {
+
+            "Produk Hukum":
+                "statProdukHukum",
+
+            "Pedoman":
+                "statPedoman",
+
+            "Perencanaan":
+                "statPerencanaan",
+
+            "Administrasi":
+                "statAdministrasi",
+
+            "Template":
+                "statTemplate"
+
+        };
+
+
+        Object.keys(elemen).forEach(kategori => {
+
+            const element =
+                document.getElementById(
+                    elemen[kategori]
+                );
+
+            if(element){
+
+                element.textContent =
+                    statistik[kategori];
+
+            }
+
+        });
+
+
+    }catch(error){
+
+        console.error(
+            "STATISTIK DOKUMEN:",
+            error
+        );
+
+    }
 
 }
 
 /*==================================================
 ISI FILTER QUICK SEARCH
+KATEGORI MENGIKUTI FOLDER LEVEL 1 GOOGLE DRIVE
 ==================================================*/
 
 function isiQuickSearch(data){
 
-    const kategori = document.getElementById("quickKategori");
-    const tahun = document.getElementById("quickTahun");
+    const kategori =
+        document.getElementById("quickKategori");
+
+    const tahun =
+        document.getElementById("quickTahun");
+
+
+    /*==================================================
+    KATEGORI
+    ==================================================*/
 
     if(kategori){
 
-        const daftarKategori = [
-            ...new Set(
-                data
-                    .map(d => d.kategori)
-                    .filter(Boolean)
-            )
-        ];
-
-        daftarKategori.sort();
-
         kategori.innerHTML =
-            `<option value="">Semua Kategori</option>`;
+            `<option value="">
+                Semua Kategori
+            </option>`;
 
-        daftarKategori.forEach(k=>{
 
-            kategori.innerHTML +=
-                `<option value="${k}">${k}</option>`;
+        MASTER_KATEGORI.forEach(item => {
+
+            kategori.innerHTML += `
+                <option value="${item}">
+                    ${item}
+                </option>
+            `;
 
         });
 
     }
 
+
+    /*==================================================
+    TAHUN
+    ==================================================*/
+
     if(tahun){
 
         const daftarTahun = [
+
             ...new Set(
+
                 data
                     .map(d => d.tahun)
                     .filter(Boolean)
+
             )
+
         ];
 
         daftarTahun.sort().reverse();
 
+
         tahun.innerHTML =
-            `<option value="">Semua Tahun</option>`;
+            `<option value="">
+                Semua Tahun
+            </option>`;
 
-        daftarTahun.forEach(t=>{
 
-            tahun.innerHTML +=
-                `<option value="${t}">${t}</option>`;
+        daftarTahun.forEach(t => {
+
+            tahun.innerHTML += `
+                <option value="${t}">
+                    ${t}
+                </option>
+            `;
 
         });
 
     }
 
 }
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        loadStatistikDokumen();
+
+    }
+
+);

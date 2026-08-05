@@ -22,6 +22,39 @@ async function getInventaris(){
 }
 
 /*==================================================
+GET STRUKTUR FOLDER GOOGLE DRIVE
+==================================================*/
+
+async function getFolderStructure(){
+
+    const response = await fetch(
+        API_URL + "?action=folder"
+    );
+
+    if(!response.ok){
+
+        throw new Error(
+            "Gagal mengambil struktur folder."
+        );
+
+    }
+
+    const hasil = await response.json();
+
+    if(!hasil.status){
+
+        throw new Error(
+            hasil.pesan ||
+            "Struktur folder gagal diambil."
+        );
+
+    }
+
+    return hasil.data || [];
+
+}
+
+/*==================================================
 TAMBAH DOKUMEN
 ==================================================*/
 
@@ -140,13 +173,76 @@ TAMBAH SURAT MASUK
 
 async function tambahSuratMasuk(data){
 
+    const params = new URLSearchParams();
+
+    params.append(
+        "action",
+        "tambahSuratMasuk"
+    );
+
+    params.append(
+        "data",
+        JSON.stringify(data)
+    );
+
+    const response = await fetch(API_URL, {
+
+        method: "POST",
+
+        body: params
+
+    });
+
+    if(!response.ok){
+
+        throw new Error(
+            "Server mengembalikan status " +
+            response.status
+        );
+
+    }
+
+    return await response.json();
+
+}
+
+/*==================================================
+GET SURAT MASUK
+==================================================*/
+
+async function getSuratMasuk(){
+
+    const response = await fetch(
+        API_URL +
+        "?action=suratMasuk"
+    );
+
+    if(!response.ok){
+
+        throw new Error(
+            "Gagal mengambil data surat masuk. Status: " +
+            response.status
+        );
+
+    }
+
+    return await response.json();
+
+}
+
+/*==================================================
+TAMBAH SURAT KELUAR
+==================================================*/
+
+async function tambahSuratKeluar(data){
+
     const response = await fetch(API_URL,{
 
         method:"POST",
 
         body:JSON.stringify({
 
-            action:"tambahSuratMasuk",
+            action:"tambahSuratKeluar",
 
             data:data
 
@@ -155,15 +251,6 @@ async function tambahSuratMasuk(data){
     });
 
     return await response.json();
-
-}
-
-async function getSuratMasuk(){
-
-const res=
-await fetch(API_URL+"?action=suratMasuk");
-
-return await res.json();
 
 }
 
@@ -191,6 +278,76 @@ async function deleteDokumen(id){
         body:formData
 
     });
+
+    return await response.json();
+
+}
+
+/*==================================================
+HAPUS SURAT MASUK
+==================================================*/
+
+async function hapusSuratMasuk(id){
+
+    const response =
+        await fetch(API_URL,{
+
+            method:"POST",
+
+            body:JSON.stringify({
+
+                action:"hapusSuratMasuk",
+
+                data:{
+                    id:id
+                }
+
+            })
+
+        });
+
+    if(!response.ok){
+
+        throw new Error(
+            "Gagal menghapus surat masuk."
+        );
+
+    }
+
+    return await response.json();
+
+}
+
+/*==================================================
+HAPUS SURAT KELUAR
+==================================================*/
+
+async function hapusSuratKeluar(id){
+
+    const response =
+        await fetch(API_URL,{
+
+            method:"POST",
+
+            body:JSON.stringify({
+
+                action:"hapusSuratKeluar",
+
+                data:{
+                    id:id
+                }
+
+            })
+
+        });
+
+    if(!response.ok){
+
+        throw new Error(
+            "Gagal menghapus surat keluar."
+        );
+
+    }
 
     return await response.json();
 
