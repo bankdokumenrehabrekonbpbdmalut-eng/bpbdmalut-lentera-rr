@@ -156,6 +156,105 @@ ${item}
 }
 
 /*==================================================
+SINKRONISASI GOOGLE DRIVE
+==================================================*/
+
+document
+.getElementById("btnSinkronisasiDrive")
+?.addEventListener(
+    "click",
+    sinkronisasiGoogleDrive
+);
+
+
+async function sinkronisasiGoogleDrive(){
+
+    const btn =
+        document.getElementById(
+            "btnSinkronisasiDrive"
+        );
+
+    if(!btn) return;
+
+
+    const teksAwal =
+        btn.innerHTML;
+
+
+    try{
+
+        /*
+         * Cegah klik berulang
+         */
+
+        btn.disabled = true;
+
+        btn.innerHTML = `
+            <span
+                class="spinner-border spinner-border-sm me-1"
+                role="status">
+            </span>
+            Menyinkronkan...
+        `;
+
+
+        /*
+         * Jalankan sinkronisasi
+         */
+
+        const hasil =
+            await sinkronisasiDrive();
+
+
+        /*
+         * Tampilkan hasil
+         */
+
+        alert(
+            hasil.pesan ||
+            "Sinkronisasi Google Drive berhasil."
+        );
+
+
+        /*
+         * Ambil ulang data inventaris
+         */
+
+        await loadAdminInventaris();
+
+        await loadDashboard();
+
+
+    }catch(error){
+
+        console.error(
+            "SINKRONISASI GOOGLE DRIVE:",
+            error
+        );
+
+
+        alert(
+            error.message ||
+            "Sinkronisasi Google Drive gagal."
+        );
+
+
+    }finally{
+
+        /*
+         * Aktifkan kembali tombol
+         */
+
+        btn.disabled = false;
+
+        btn.innerHTML =
+            teksAwal;
+
+    }
+
+}
+
+/*==================================================
 RENDER TABEL
 ==================================================*/
 

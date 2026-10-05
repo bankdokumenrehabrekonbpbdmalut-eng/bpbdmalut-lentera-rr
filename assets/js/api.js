@@ -352,3 +352,38 @@ async function hapusSuratKeluar(id){
     return await response.json();
 
 }
+
+/*==================================================
+SINKRONISASI GOOGLE DRIVE
+==================================================*/
+
+async function sinkronisasiDrive(){
+
+    const response = await fetch(
+        API_URL + "?action=syncDrive"
+    );
+
+    if(!response.ok){
+
+        throw new Error(
+            "Gagal mengakses API sinkronisasi. Status: " +
+            response.status
+        );
+
+    }
+
+    const hasil =
+        await response.json();
+
+    if(!hasil.status){
+
+        throw new Error(
+            hasil.pesan ||
+            "Sinkronisasi Google Drive gagal."
+        );
+
+    }
+
+    return hasil;
+
+}
